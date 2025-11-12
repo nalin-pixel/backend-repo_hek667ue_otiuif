@@ -103,6 +103,177 @@ async def get_food(food_id: str):
     return doc
 
 
+@app.post("/api/foods/seed")
+async def seed_foods():
+    """Seed the database with a curated set of foods if they don't exist."""
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database not configured")
+
+    seed_data = [
+        {
+            "name": "Apple",
+            "aliases": ["Malus domestica"],
+            "category": "fruit",
+            "serving_size": "1 medium (182 g)",
+            "calories": 95,
+            "macros": {"protein": 0.5, "carbs": 25, "fat": 0.3, "fiber": 4.4},
+            "micronutrients": [
+                {"name": "Vitamin C", "unit": "mg", "amount": 8.4},
+                {"name": "Potassium", "unit": "mg", "amount": 195},
+            ],
+            "glycemic_index": 36,
+            "best_time_to_eat": "Morning or as a snack",
+            "benefits": ["Gut health", "Hydration", "Satiety"],
+            "conditions_helped": ["Weight management", "Heart health"],
+        },
+        {
+            "name": "Banana",
+            "category": "fruit",
+            "serving_size": "1 medium (118 g)",
+            "calories": 105,
+            "macros": {"protein": 1.3, "carbs": 27, "fat": 0.3, "fiber": 3.1},
+            "micronutrients": [
+                {"name": "Potassium", "unit": "mg", "amount": 422},
+                {"name": "Vitamin B6", "unit": "mg", "amount": 0.4},
+            ],
+            "glycemic_index": 51,
+            "best_time_to_eat": "Pre-workout or afternoon",
+            "benefits": ["Energy", "Electrolyte balance"],
+            "conditions_helped": ["Muscle cramps", "Digestion"],
+        },
+        {
+            "name": "Oats",
+            "category": "grain",
+            "serving_size": "1/2 cup dry (40 g)",
+            "calories": 154,
+            "macros": {"protein": 5.3, "carbs": 27, "fat": 2.6, "fiber": 4},
+            "micronutrients": [
+                {"name": "Manganese", "unit": "mg", "amount": 1.7},
+                {"name": "Iron", "unit": "mg", "amount": 1.7},
+            ],
+            "glycemic_index": 55,
+            "best_time_to_eat": "Morning",
+            "benefits": ["Cholesterol support", "Satiety"],
+            "conditions_helped": ["Heart health", "Blood sugar"],
+        },
+        {
+            "name": "Turmeric",
+            "category": "spice",
+            "serving_size": "1 tsp (3 g)",
+            "calories": 9,
+            "macros": {"protein": 0.3, "carbs": 2, "fat": 0.1, "fiber": 0.7},
+            "micronutrients": [
+                {"name": "Manganese", "unit": "mg", "amount": 0.2}
+            ],
+            "glycemic_index": 5,
+            "best_time_to_eat": "With meals",
+            "benefits": ["Anti-inflammatory", "Antioxidant"],
+            "conditions_helped": ["Joint health", "Metabolic health"],
+        },
+        {
+            "name": "Salmon",
+            "category": "protein",
+            "serving_size": "100 g cooked",
+            "calories": 208,
+            "macros": {"protein": 22, "carbs": 0, "fat": 13, "fiber": 0},
+            "micronutrients": [
+                {"name": "Vitamin D", "unit": "IU", "amount": 447},
+                {"name": "Omega-3 (EPA+DHA)", "unit": "g", "amount": 1.8},
+            ],
+            "glycemic_index": 0,
+            "best_time_to_eat": "Lunch or dinner",
+            "benefits": ["Brain health", "Heart health"],
+            "conditions_helped": ["Inflammation", "Triglycerides"],
+        },
+        {
+            "name": "Greek Yogurt",
+            "aliases": ["Yoghurt"],
+            "category": "dairy",
+            "serving_size": "170 g (6 oz)",
+            "calories": 100,
+            "macros": {"protein": 17, "carbs": 6, "fat": 0},
+            "micronutrients": [
+                {"name": "Calcium", "unit": "mg", "amount": 187},
+                {"name": "Probiotics", "unit": "CFU", "amount": 0},
+            ],
+            "glycemic_index": 11,
+            "best_time_to_eat": "Morning or snack",
+            "benefits": ["Gut health", "Muscle repair"],
+            "conditions_helped": ["Bone health", "Satiety"],
+        },
+        {
+            "name": "Spinach",
+            "category": "vegetable",
+            "serving_size": "100 g raw",
+            "calories": 23,
+            "macros": {"protein": 2.9, "carbs": 3.6, "fat": 0.4, "fiber": 2.2},
+            "micronutrients": [
+                {"name": "Vitamin K", "unit": "mcg", "amount": 483},
+                {"name": "Folate", "unit": "mcg", "amount": 194},
+            ],
+            "glycemic_index": 15,
+            "best_time_to_eat": "Lunch or dinner",
+            "benefits": ["Micronutrient dense", "Eye health"],
+            "conditions_helped": ["Anemia", "Blood pressure"],
+        },
+        {
+            "name": "Sweet Potato",
+            "category": "vegetable",
+            "serving_size": "1 medium (130 g)",
+            "calories": 112,
+            "macros": {"protein": 2, "carbs": 26, "fat": 0.1, "fiber": 3.9},
+            "micronutrients": [
+                {"name": "Vitamin A", "unit": "mcg", "amount": 944},
+                {"name": "Potassium", "unit": "mg", "amount": 438},
+            ],
+            "glycemic_index": 54,
+            "best_time_to_eat": "Lunch or post-workout",
+            "benefits": ["Stable energy", "Eye health"],
+            "conditions_helped": ["Blood sugar", "Immunity"],
+        },
+        {
+            "name": "Almonds",
+            "category": "nut",
+            "serving_size": "28 g (23 almonds)",
+            "calories": 164,
+            "macros": {"protein": 6, "carbs": 6, "fat": 14, "fiber": 3.5},
+            "micronutrients": [
+                {"name": "Vitamin E", "unit": "mg", "amount": 7.3},
+                {"name": "Magnesium", "unit": "mg", "amount": 76},
+            ],
+            "glycemic_index": 0,
+            "best_time_to_eat": "Snack or with breakfast",
+            "benefits": ["Satiety", "Heart health"],
+            "conditions_helped": ["Cholesterol", "Blood sugar"],
+        },
+        {
+            "name": "Lentils",
+            "category": "legume",
+            "serving_size": "1/2 cup cooked (99 g)",
+            "calories": 115,
+            "macros": {"protein": 9, "carbs": 20, "fat": 0.4, "fiber": 8},
+            "micronutrients": [
+                {"name": "Folate", "unit": "mcg", "amount": 179},
+                {"name": "Iron", "unit": "mg", "amount": 3.3},
+            ],
+            "glycemic_index": 32,
+            "best_time_to_eat": "Lunch or dinner",
+            "benefits": ["Protein", "Gut health"],
+            "conditions_helped": ["Blood sugar", "Heart health"],
+        },
+    ]
+
+    inserted = 0
+    for doc in seed_data:
+        res = db["fooditem"].update_one({"name": doc["name"]}, {"$setOnInsert": doc}, upsert=True)
+        # If upserted_id is not None, a new doc was inserted
+        if res.upserted_id is not None:
+            inserted += 1
+
+    total = db["fooditem"].count_documents({})
+    return {"inserted": inserted, "total": total}
+
+
 @app.get("/test")
 async def test_database():
     response = {
